@@ -14,9 +14,9 @@ void setup() {
   	//made it up to 64 binary so far
   	bools[0] = 1;
   	bools[1] = 1;
-  	bools[2] = 1;
+  	bools[2] = 0;
   	bools[3] = 1;
-  	bools[4] = 1;
+  	bools[4] = 0;
   	bools[5] = 1;
   	bools[6] = 1;
   	bools[7] = 1;
