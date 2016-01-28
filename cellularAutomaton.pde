@@ -1,39 +1,32 @@
 int resolutionX = 600;
 int resolutionY = 700;
-int a, b, c;
+// int a, b, c;
 //PVector first, b, c;
 //int refreshRate = 200;
-boolean bStop = true;
-int stopStartTime;
+// boolean bStop = true;
+// int stopStartTime;
 int globalNum;
 int[] bools = new int[8];
 //binary matrix of whole graph
-int[][] points = new int[resolutionX][resolutionY];
+int[][] points;
+
+color white = color(255,255,255);
+color black = color(0,0,0);
+
 
 void setup() {
   size(600, 700);
-    stroke(255);
-    globalNum = (int)random(255);
-    increment();
-    // int r = int(rand);
-    //made it up to 64 binary so far
-    // bools[0] = 1;
-    // bools[1] = 1;
-    // bools[2] = 0;
-    // bools[3] = 1;
-    // bools[4] = 0;
-    // bools[5] = 1;
-    // bools[6] = 1;
-    // bools[7] = 1;
+  //made it up to 64 binary so far
+  globalNum = (int)random(255);
+  points = new int[width][height];
 
-    //first = new PVector(resolutionX/2, 0);
-    //stopStartTime = millis();
-    //background(0);
-    loop();
+  loadPixels();
+  background(0);
+  loop();
 }
 
 void draw() {
-  background(0);
+  setBackgroundColor(black);
   render();
   increment();
   delay(1000);
@@ -50,47 +43,49 @@ void increment() {
     bin = bin/10;
   }
 }
-
+/**
+* the previous render() function drew every point individually
+* this was very process intensive,
+* the array pixels instead loads the grid like an image
+* doing a single draw per loop instead of 600*700 draws
+*/
 void render() {
   //initializes all points with 0
   for (int y=0; y<resolutionY; y++) {
     for (int x=0; x<resolutionX; x++)
       points[x][y] = 0;
   }
+  // the cascading starting point
   points[resolutionX/2][0] = 1;
-  point(resolutionX/2, 0);
   for (int y=0; y<resolutionY-1; y++) {
-    // delay(250);
     for (int x=1; x<resolutionX-2; x++) {
-      a = points[x-1][y];
-      b = points[x][y];
-      c = points[x+1][y];
+      int a = points[x-1][y];
+      int b = points[x][y];
+      int c = points[x+1][y];
 
+      // if the binary automata rule returns true then we draw a pixel
       if (addPt(a, b, c)==1) {
         points[x][y+1] = 1;
-        point(x, y+1);
+        int position = width*y+x;
+        pixels[position] = white;
+
+        // point(x, y+1);
       }
     }
   }
-  //next rule, if key down pressed, add row
-  //next next rule, check 4 lines at a time
-  // // println("Binary value: " + String.valueOf(bools[0])+
-  // // 	String.valueOf(bools[1])+String.valueOf(bools[2])+
-  // // 	String.valueOf(bools[3])+String.valueOf(bools[4])+
-  // // 	String.valueOf(bools[5])+String.valueOf(bools[6])+
-  // // 	String.valueOf(bools[7]) + "\n");
-  //
-  // save(String.valueOf(bools[0])+String.valueOf(bools[1])+
-  // 		String.valueOf(bools[2])+String.valueOf(bools[3])+
-  // 		String.valueOf(bools[4])+String.valueOf(bools[5])+
-  // 		String.valueOf(bools[6])+String.valueOf(bools[7])+
-  // 		"Piramid.tif");
-  bStop = true;
-  // noLoop();
+  // the processing function that draws the pixels[] grid
+  updatePixels();
+}
+
+void setBackgroundColor(color background) {
+  for (int i=0; i<width*height; ++i) {
+    pixels[i] = background;
+  }
+  updatePixels();
 }
 
 int addPt(int a, int b, int c) {
-  //binary system for yes/no make point
+  //binary system for yes/no to draw the point point
   if (a==1 && b==1 && c==1)
     return bools[0];
   if (a==1 && b==1 && c==0)
@@ -105,10 +100,8 @@ int addPt(int a, int b, int c) {
     return bools[5];
   if (a==0 && b==0 && c==1)
     return bools[6];
-  if (a==0 && b==0 && c==0)
-    return bools[7];
-  //it should never get here
-  return 0;
+  // if (a==0 && b==0 && c==0)
+  return bools[7];
 }
 
 int binConvert(int num) {
