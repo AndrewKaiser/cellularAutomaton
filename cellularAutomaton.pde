@@ -1,10 +1,5 @@
 int resolutionX = 600;
 int resolutionY = 700;
-// int a, b, c;
-//PVector first, b, c;
-//int refreshRate = 200;
-// boolean bStop = true;
-// int stopStartTime;
 int globalNum;
 int[] bools = new int[8];
 //binary matrix of whole graph
@@ -18,6 +13,7 @@ void setup() {
   size(600, 700);
   //made it up to 64 binary so far
   globalNum = (int)random(255);
+  // the grid that dictates the logic of the points that are drawn
   points = new int[width][height];
 
   loadPixels();
@@ -43,12 +39,19 @@ void increment() {
     bin = bin/10;
   }
 }
+
 /**
 * the previous render() function drew every point individually
 * this was very process intensive,
 * the array pixels instead loads the grid like an image
 * doing a single draw per loop instead of 600*700 draws
+*
+* determining drawing the point using 3 previous points
+* allows us to have 255 different combinations,
+* this is because there needs to be 9 digits in the array to cover all possibilites
+* eg. 3 pixels, 9 total possibilites, needs 255 bit numbers like this 11111111
 */
+
 void render() {
   //initializes all points with 0
   for (int y=0; y<resolutionY; y++) {
